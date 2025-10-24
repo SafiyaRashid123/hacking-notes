@@ -1,0 +1,11 @@
+gobuster dir -u http://10.129.227.233 -w /usr/share/wordlists/dirb/common.txt -x php,html,txt
+IF GIBUSTER GIVES  A ERROR 
+$ gobuster dir -u http://greenhorn.htb -w /usr/share/wordlists/dirb/common.txt -x php,html,txt -s "204,301,307,401,403,500" -b "" 
+## FUFF
+
+ffuf -w /usr/share/amass/wordlists/bitquark_subdomains_top100K.txt -H "Host:FUZZ.10.129.227.47" -u http://10.129.227.47/ -ic -fs 154 ( 2>/dev/null) if needed
+
+
+
+ffuf -w /usr/share/amass/wordlists/bitquark_subdomains_top100K.txt -H "Host:FUZZ.10.129.227.233" -u http://10.129.232.51/ -ic -fs 154 ( 2>/dev/null) if needed
+-r for following rediretions -mc  all for no missing false negative 
