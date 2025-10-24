@@ -1,0 +1,30 @@
+DOCKER PREVILLEDE ESCALTION 
+1)DO evn : to check for environment variables which might have the password of the user which is sometimes needed to configure the processes for running 
+2)CHECK FOR SOCKETS COMMUNCATING WITH THE DOKCER DAEMON ON THE HOST MACHINE
+ls -l /var/run/docker.sock
+3)Check the container's privileges    OR      SYS_ADMIN CAPABILTIES:
+cat /proc/self/status | grep Cap IF IT IS PREVILLEDEG THERE ARE ATTACK VECTORS TO ESCAPE THE DOCKER Privileged containers can mount host devices so just copy the entire root directory into dokcer
+ `capsh --print | grep sys_admin` 
+4)Check mounted filesystems: if the container is privileged or has the SYS_ADMIN capability.
+mount 
+5)Check for available devices:
+ls /dev
+6)Check the kernel version:
+uname -r
+
+
+____________________________________
+SMARTTT ASS PREV ESCALATION TECHNIQUE ---OPTIMAL SCENARIO WE HAVE A USER ON THE ACTUAL HOST AND ON IN THE CONATINER 
+
+IF WE SEE FILES MOUNTED FROM THE HOST TO THE DOCKER CONTAINER using the *mount* command, THEN CREATING A FILE IN THE DOCKER WILL SHOW IT ON THE HOST IN THE DIRECTORY IT WAS MAPPED TO, SO JUST COPY THE BIN/BASH BINARY TO THAT DIRECTORY IN THE CONTAINER THEN SET chmod +s file , then on the host run this file which has the setuid bit, it will run as root and khalas u get the flag 
+
+
+______________________________________________________________
+from outside docker check if there docker is previlledged
+ docker run --rm --privileged alpine id 
+ (if the image alpine is there or whatever is there found by doing docker images )
+ just start the docker with root prevs and mount the root directory  
+ https://www.hackingarticles.in/docker-privilege-escalation/
+
+## CHECK DOCKER IP AND THEN CHECK FOR OPEN PORTS IF NOTHING WORKS 
+for PORT in {0..1000}; do timeout 1 bash -c "/dev/null" 2>/dev/null && echo "port $PORT is open"; done since nmap is not insatlled u can use this 
