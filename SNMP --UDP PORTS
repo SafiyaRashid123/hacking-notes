@@ -1,0 +1,44 @@
+https://hackviser.com/tactics/pentesting/services/snmp  - URL FOR PENTESTING SNNMP 
+
+SNMPBULKWALK IF MCUH FASTER SO USE THAT , search for /bin/bash then 
+SNMP -UDP PORT TO BE SCANNED FOR  WITH -sU flag 
+############ snmp -c public -v 2c <IP> ############# public a read only acces string ( private string allowed changes also )
+############ snmpbulkwalk -Cr1000 -c public -v2c ip . (add the datat for futher sorting into a file > filename) ########### .: STARTS GETTING THE TRAFFIC FORM THE TOP -C: TOO SPECIFY COMMAND LINE TOOL r1000 : 1000 packets in a min.
+bulkwalk gets a lot of requests in a go.
+_____________________________________________________________________________________
+THINGS TO KNOW :
+___________________
+1) snmp
+This is the generic command. It's usually followed by a specific action like:
+
+snmpget to retrieve a single value.
+snmpwalk to retrieve a whole tree of values.
+snmptable to get a table.
+snmpbulkget for efficient bulk requests.
+
+
+A TOOL 
+downloading steps :
+sudo apt install snmp-mibs-downloader
+sudo nano /etc/snmp/snmp.conf  , comment out mibs
+_________________________________________________________________________________________
+
+snmpwalk gives a lot of information, steps to sort out the info 
+
+We are given a command: grep -oP '::.*?\.' filename | sort | uniq -c | sort -n
+Let's break it down step by step:
+
+#################--------https://hackviser.com/tactics/pentesting/services/snmp
+---################
+
+-o: Print only the matched parts of a matching line.
+-P: Use Perl-compatible regular expressions (PCRE).
+The pattern '::.*?\.':
+::: Matches the literal string "::".
+.*?: Matches any character (except newline) in a non-greedy way (as few as possible).
+\.: Matches a literal dot (period).
+So, this will match any substring that starts with "::" and ends with the first following dot (period). sort: Sorts the matched strings alphabetically. uniq -c: Counts the number of occurrences of each unique string sort -n: Sorts the counts numerically (by the count value).
+
+
+important OIDS 
+::hrSWRunName., ::hrSWRunPath.: (Not on your list but often available) List of running software/processes and their paths. An attacker can see what security software (AV, EDR, HIDS) is running to figure out how to evade it.
